@@ -19,7 +19,7 @@
     "node-fetch": "^2.6.5",
     "open": "^8.2.1",
     "path": "^0.12.7",
-    "simple-git": "^2.46.0",
+    "simple-git": "^3.14.1",
     "telegraf": "^4.4.2",
     "twitter": "^1.7.1",
     "util": "^0.12.4",
