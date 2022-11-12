@@ -1,7 +1,7 @@
 {
     "type": "User Profile",
     "name": "RichardHaasnoot",
-    "config": "{\n    \"signature\": {\n        \"message\": \"RichardHaasnoot\",\n        \"messageHash\": \"0xef80d213f1545f9051b272654ffa5929a841c67180e32587fe5f5e84e1783988\",\n        \"v\": \"0x1b\",\n        \"r\": \"0xa05432d58548bb9f9c1407b5623f9c3650f3c9aef575355d6186d295bb315613\",\n        \"s\": \"0x500a23f633e6c4cb5cf92f73f6a37a365ab6fafc4678880d96ea0c762b3ab4dc\",\n        \"signature\": \"0xa05432d58548bb9f9c1407b5623f9c3650f3c9aef575355d6186d295bb315613500a23f633e6c4cb5cf92f73f6a37a365ab6fafc4678880d96ea0c762b3ab4dc1b\"\n    }\n}",
+    "config": "{\"signature\":{\"message\":\"RichardHaasnoot\",\"messageHash\":\"0xef80d213f1545f9051b272654ffa5929a841c67180e32587fe5f5e84e1783988\",\"v\":\"0x1b\",\"r\":\"0xa05432d58548bb9f9c1407b5623f9c3650f3c9aef575355d6186d295bb315613\",\"s\":\"0x500a23f633e6c4cb5cf92f73f6a37a365ab6fafc4678880d96ea0c762b3ab4dc\",\"signature\":\"0xa05432d58548bb9f9c1407b5623f9c3650f3c9aef575355d6186d295bb315613500a23f633e6c4cb5cf92f73f6a37a365ab6fafc4678880d96ea0c762b3ab4dc1b\"},\"codeName\":\"RichardHaasnoot\"}",
     "project": "Governance",
     "tokenPowerSwitch": {
         "type": "Token Power Switch",
@@ -192,7 +192,9 @@
                             "referenceParentCombinedNodePath": [
                                 [
                                     "Smidy13",
-                                    "User Profile"
+                                    "User Profile",
+                                    "Governance",
+                                    "4b5eca40-4d97-454d-91f3-8627a98ef682"
                                 ]
                             ]
                         }
@@ -315,7 +317,9 @@
                             "referenceParentCombinedNodePath": [
                                 [
                                     "cozed-gh",
-                                    "User Profile"
+                                    "User Profile",
+                                    "Governance",
+                                    "07f0b13a-a50f-4488-8a2c-a3f8f08e889d"
                                 ]
                             ]
                         }
@@ -438,7 +442,9 @@
                             "referenceParentCombinedNodePath": [
                                 [
                                     "Luis-Fernando-Molina",
-                                    "User Profile"
+                                    "User Profile",
+                                    "Governance",
+                                    "a8de78f0-c3e4-4a2a-b7e8-f659073969db"
                                 ]
                             ]
                         }
@@ -597,17 +603,17 @@
     "id": "f411e77e-7e56-4de3-a9f6-87bcc9307e03",
     "savedPayload": {
         "position": {
-            "x": 14037,
-            "y": 10508.5
+            "x": 13333.333333333334,
+            "y": 19850
         },
         "targetPosition": {
-            "x": 14037,
-            "y": 10508.5
+            "x": 13333.333333333334,
+            "y": 19850
         },
         "floatingObject": {
             "isPinned": false,
             "isFrozen": false,
-            "isCollapsed": false,
+            "isCollapsed": true,
             "angleToParent": 1,
             "distanceToParent": 3,
             "arrangementStyle": 0
