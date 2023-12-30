@@ -28,6 +28,8 @@ function newLayersPanel() {
     let visibleLayers = []
     let firstVisibleLayer = 1
 
+    let configStyle
+
     const LAYER_SEPARATION = 0
 
     let headerHeight = 40
@@ -82,7 +84,7 @@ function newLayersPanel() {
         }
 
         thisObject.container.frame.position = position
-        UI.projects.foundations.utilities.loadSaveFrame.loadFrame(thisObject.payload, thisObject.container.frame)
+        UI.projects.visualScripting.utilities.loadSaveFrame.loadFrame(thisObject.payload, thisObject.container.frame)
 
         thisObject.upDownButton = newUpDownButton()
         thisObject.upDownButton.parentContainer = thisObject.container
@@ -114,7 +116,7 @@ function newLayersPanel() {
     }
 
     function saveObjectStateVisibleLayers() {
-        UI.projects.foundations.utilities.nodeConfig.saveConfigProperty(thisObject.payload, 'visibleLayers', desiredVisibleLayers)
+        UI.projects.visualScripting.utilities.nodeConfig.saveConfigProperty(thisObject.payload, 'visibleLayers', desiredVisibleLayers)
     }
 
     function saveObjectStatePanelLocation() {
@@ -122,13 +124,13 @@ function newLayersPanel() {
             upOrDown: thisObject.upDownButton.status,
             leftOrRight: thisObject.leftRightButton.status
         }
-        UI.projects.foundations.utilities.nodeConfig.saveConfigProperty(thisObject.payload, 'panelLocation', panelLocation)
+        UI.projects.visualScripting.utilities.nodeConfig.saveConfigProperty(thisObject.payload, 'panelLocation', panelLocation)
     }
 
     function readObjectState() {
         let storedValue
 
-        storedValue = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'visibleLayers')
+        storedValue = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'visibleLayers')
 
         if (isNaN(storedValue) || storedValue === null || storedValue === undefined) {
             // not using this value
@@ -147,7 +149,7 @@ function newLayersPanel() {
             }
         }
 
-        storedValue = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'panelLocation')
+        storedValue = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'panelLocation')
 
         if (storedValue === null || storedValue === undefined) {
             // not using this value
@@ -386,14 +388,14 @@ function newLayersPanel() {
 
         thisObject.upDownButton.physics()
         thisObject.leftRightButton.physics()
-        UI.projects.foundations.utilities.loadSaveFrame.saveFrame(thisObject.payload, thisObject.container.frame)
+        UI.projects.visualScripting.utilities.loadSaveFrame.saveFrame(thisObject.payload, thisObject.container.frame)
         syncWithConfigPhysics()
 
         /*
-        The overall idea here is that we need to keep syncronized the panel with the layers that are
+        The overall idea here is that we need to keep synchronized the panel with the layers that are
         defined at the Designer. Users can connect or disconnect any objext resulting in changes in which
         are valid layers and which not at any point in time. So what we do here is trying to keep the panel
-        only with the layers that are connected to the Charting Space hiriarcy.
+        only with the layers that are connected to the Charting Space hierarchy.
     
         To achieve this, first we are going to move all session related cards to a local array. Then we are
         going to check for layers at the designer, and will move back the cards which still have layers well
@@ -408,14 +410,14 @@ function newLayersPanel() {
         moveToLocalLayers()
         syncWithDesignerLayers()
 
-        /* At this poins all the cards still at the local array need to be removed from the panel. */
+        /* At this points all the cards still at the local array need to be removed from the panel. */
         turnOffUnusedLayers()
         calculateVisbleLayers()
 
         function syncWithDesignerLayers() {
             if (thisObject.payload.node === undefined) { return }
             let layerManager = thisObject.payload.node
-            let layers = UI.projects.foundations.utilities.branches.nodeBranchToArray(layerManager, 'Layer')
+            let layers = UI.projects.visualScripting.utilities.branches.nodeBranchToArray(layerManager, 'Layer')
             for (let p = 0; p < layers.length; p++) {
                 let layerNode = layers[p]
 
@@ -490,25 +492,74 @@ function newLayersPanel() {
         let label2 = thisObject.payload.node.payload.parentNode.name.substring(0, 18)
         let label3 = ''
 
-        let icon1 = UI.projects.foundations.spaces.designSpace.getIconByProjectAndType(thisObject.payload.node.payload.parentNode.payload.parentNode.project, thisObject.payload.node.payload.parentNode.payload.parentNode.type)
-        let icon2 = UI.projects.foundations.spaces.designSpace.getIconByProjectAndType(thisObject.payload.node.payload.parentNode.project, thisObject.payload.node.payload.parentNode.type)
+        let icon1 = UI.projects.workspaces.spaces.designSpace.getIconByProjectAndType(thisObject.payload.node.payload.parentNode.payload.parentNode.project, thisObject.payload.node.payload.parentNode.payload.parentNode.type)
+        let icon2 = UI.projects.workspaces.spaces.designSpace.getIconByProjectAndType(thisObject.payload.node.payload.parentNode.project, thisObject.payload.node.payload.parentNode.type)
 
-        let backgroundColor = UI_COLOR.BLACK
+        // This controls the color of the panels before scrolling to open them.
+        let chartingSpaceNode = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadByNodeType('Charting Space')
+        if (chartingSpaceNode !== undefined) {
+            if (chartingSpaceNode.spaceStyle !== undefined) {
+                configStyle = JSON.parse(chartingSpaceNode.spaceStyle.config)
+            } else {
+                configStyle = undefined
+            }
+        } else {
+            configStyle = undefined
+        }
+
+        let backgroundColor
+        if (configStyle === undefined || configStyle.indicatorLayersPanelColor === undefined) {
+            backgroundColor = UI_COLOR.BLACK
+        } else {
+            backgroundColor = eval(configStyle.indicatorLayersPanelColor)
+        }
+
+        // Here we control the panel border color inside the indicator layer panels.
+        let borderColor
+        if (configStyle === undefined || configStyle.indicatorLayersPanelBorderColor === undefined) {
+            borderColor = UI_COLOR.RUSTED_RED
+        } else {
+            borderColor = eval(configStyle.indicatorLayersPanelBorderColor)
+        }
 
         let params = {
             cornerRadius: 5,
             lineWidth: 1,
             container: thisObject.container,
-            borderColor: UI_COLOR.RUSTED_RED,
+            borderColor: borderColor,
             castShadow: false,
             backgroundColor: backgroundColor,
             opacity: 1
         }
 
+        // Here we set the opacity for the indicator drop down panel if it is defined.
+        if (configStyle === undefined || configStyle.indicatorLayersPanelOpacity === undefined) {
+            const thisOpacity = 1
+            params.opacity = thisOpacity
+            UI.projects.foundations.utilities.drawPrint.roundedCornersBackground(params)
+        } else {
+            const thisOpacity = eval(configStyle.indicatorLayersPanelOpacity)
+            params.opacity = thisOpacity
+            UI.projects.foundations.utilities.drawPrint.roundedCornersBackground(params)
+        }
+
         UI.projects.foundations.utilities.drawPrint.roundedCornersBackground(params)
 
-        UI.projects.foundations.utilities.drawPrint.drawLabel(label1, 1 / 2, 0, 0, 15, 9, thisObject.container)
-        UI.projects.foundations.utilities.drawPrint.drawLabel(label2, 1 / 2, 0, 0, 30, 9, thisObject.container)
+        // Controls the color of the text in the indicator drop down panel top First line.
+        if (configStyle === undefined || configStyle.indicatorLayersPanelLabel1 === undefined) {
+            UI.projects.foundations.utilities.drawPrint.drawLabel(label1, 1 / 2, 0, 0, 15, 9, thisObject.container)
+        } else {
+            let thisColor = eval(configStyle.indicatorLayersPanelLabel1)
+            UI.projects.foundations.utilities.drawPrint.drawLabel(label1, 1 / 2, 0, 0, 15, 9, thisObject.container, thisColor)
+        }
+        
+        // Controls the color of the text in the indicator drop down panel top second line.
+        if (configStyle === undefined || configStyle.indicatorLayersPanelLabel2 === undefined) {
+            UI.projects.foundations.utilities.drawPrint.drawLabel(label2, 1 / 2, 0, 0, 30, 9, thisObject.container)
+        } else {
+            let thisColor = eval(configStyle.indicatorLayersPanelLabel2)
+            UI.projects.foundations.utilities.drawPrint.drawLabel(label2, 1 / 2, 0, 0, 30, 9, thisObject.container, thisColor)
+        }
 
         UI.projects.foundations.utilities.drawPrint.drawIcon(icon1, 1 / 8, 0, 0, 20, 28, thisObject.container)
         UI.projects.foundations.utilities.drawPrint.drawIcon(icon2, 7 / 8, 0, 0, 20, 28, thisObject.container)
@@ -555,6 +606,7 @@ function newLayersPanel() {
             browserCanvasContext.closePath()
             browserCanvasContext.setLineDash([]) // Resets Line Dash
             browserCanvasContext.lineWidth = 4
+            // Here we control the scroll bar color.
             browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.PATINATED_TURQUOISE + ', ' + 1 + ')'
             browserCanvasContext.stroke()
         }

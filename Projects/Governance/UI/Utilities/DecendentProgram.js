@@ -1,8 +1,8 @@
 function newGovernanceUtilitiesDecendentProgram() {
     /*
     This Utility Module is intended to be used by all programs that have the 
-    concept of Decendents, and when the program requires to compute recursively
-    all decendents.
+    concept of Descendants, and when the program requires to compute recursively
+    all descendants.
     */
     let thisObject = {
         run: run
@@ -23,13 +23,13 @@ function newGovernanceUtilitiesDecendentProgram() {
     ) {
         /*
         Here we will store the total amount of tokens that is going to be distributed among all participants
-        of the Program. This will come from a Pool that is configured wiht a codeName config property
+        of the Program. This will come from a Pool that is configured with a codeName config property
         with the value programCodeName
         */
         let programPoolTokenReward
         /*
         In order to be able to calculate the share of the Program Pool for each User Profile,
-        we need to accumulate all the Icomming programPowerName that each User Profile at their Program
+        we need to accumulate all the Incoming programPowerName that each User Profile at their Program
         node has, because with that Incoming Power is that each Program node gets a share of 
         the pool.
          */
@@ -169,7 +169,7 @@ function newGovernanceUtilitiesDecendentProgram() {
             ) {
                 node.payload[programPropertyName].isActive = false
                 userProfile.payload.uiObject.setErrorMessage(
-                    "Waiting for blockchain balance. It takes 6 seconds to load the balance of each profile, bacause you are using a free API provided by BSC Scan.",
+                    "Waiting for blockchain balance. It takes 1 minute to load the balance of each profile, because you are using a free API provided by BSC Scan.",
                     UI.projects.governance.globals.designer.SET_ERROR_COUNTER_FACTOR
                     )
                 return
@@ -213,7 +213,7 @@ function newGovernanceUtilitiesDecendentProgram() {
             */
             let programPower = programNode.payload.tokenPower
             /*
-            We will also reseet the count of descendents from here.
+            We will also reset the count of descendents from here.
             */
             let count = 0
             /*
@@ -252,16 +252,16 @@ function newGovernanceUtilitiesDecendentProgram() {
                         */
                         node.payload[programPropertyName].outgoingPower = node.payload[programPropertyName].outgoingPower + programPower
                         /*
-                        We need to adjust the balance that holds the accumulationt of all incomingPower of all Program
-                        nodes. To do this we will substratct the current incomingPower, bacause it is going to be recalculated
-                        inmediatelly after this, and then we will add it again after the recalcualtion.
+                        We need to adjust the balance that holds the accumulation of all incomingPower of all Program
+                        nodes. To do this we will subtract the current incomingPower, because it is going to be recalculated
+                        immediately after this, and then we will add it again after the recalculation.
                         */
                         accumulatedIncomingProgramPower = accumulatedIncomingProgramPower - node.payload[programPropertyName].incomingPower
                         /*
                         At any point in time, the incomingPower will be equal to the total of the outgoingPower minus
                         the ownPower. This is like this because the outgoingPower is the accumulation of all the 
                         power flow that is leaving this node, which includes the ownPower. That means that if we 
-                        substract the ownPower, we will have the accumulation of all the incomingPower, which 
+                        subtract the ownPower, we will have the accumulation of all the incomingPower, which
                         means all the power coming from other User Profiles referencing this one.
                         */
                         node.payload[programPropertyName].incomingPower = node.payload[programPropertyName].outgoingPower - node.payload[programPropertyName].ownPower
@@ -279,19 +279,22 @@ function newGovernanceUtilitiesDecendentProgram() {
                             at their config, and check that all percentages don't add more than 100.
                             */
                             let totalPercentage = 0
+                            let totalAmount = 0
                             let totalNodesWithoutPercentage = 0
                             for (let i = 0; i < node[usersArrayPropertyName].length; i++) {
                                 let childNode = node[usersArrayPropertyName][i]
-                                let percentage = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(childNode.payload, 'percentage')
-                                if (percentage !== undefined && isNaN(percentage) !== true) {
-                                    totalPercentage = totalPercentage + percentage
+                                let config = UI.projects.governance.utilities.nodeCalculations.getDistributionConfig(childNode, 'descendent', programPropertyName)
+                                if (config?.type === "amount" && config?.value >= 0) {
+                                    totalAmount = totalAmount + config.value
+                                } else if (config?.type === "percentage" && config?.value >= 0) {
+                                    totalPercentage = totalPercentage + config.value
                                 } else {
                                     totalNodesWithoutPercentage++
-                                }
+                                }  
                             }
                             if (totalPercentage > 100) {
                                 node.payload.uiObject.setErrorMessage(
-                                    'Program Power Switching Error. Total Percentage of children nodes is grater that 100.',
+                                    'Program Power Switching Error. Total Percentage of children nodes is greater than 100.',
                                     UI.projects.governance.globals.designer.SET_ERROR_COUNTER_FACTOR
                                     )
                                 return
@@ -300,19 +303,35 @@ function newGovernanceUtilitiesDecendentProgram() {
                             if (totalNodesWithoutPercentage > 0) {
                                 defaultPercentage = (100 - totalPercentage) / totalNodesWithoutPercentage
                             }
+                            let percentagePower = 0
+                            let amountShare = 1
+                            if (totalAmount > programPower && totalAmount > 0) {
+                                amountShare = programPower / totalAmount
+                            } else {
+                                percentagePower = programPower - totalAmount
+                            }
                             /*
                             Here we do the actual distribution.
                             */
                             for (let i = 0; i < node[usersArrayPropertyName].length; i++) {
                                 let childNode = node[usersArrayPropertyName][i]
-                                let percentage = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(childNode.payload, 'percentage')
-                                if (percentage === undefined || isNaN(percentage) === true) {
+                                let distributionAmount = 0
+                                let percentage = 0
+                                let config = UI.projects.governance.utilities.nodeCalculations.getDistributionConfig(childNode, 'descendent', programPropertyName)
+                                if (config?.type === "amount" && config?.value >= 0) {
+                                    distributionAmount = config.value * amountShare
+                                    percentage = "fixed"
+                                } else if (config?.type === "percentage" && config?.value >= 0) {
+                                    distributionAmount = percentagePower * config.value / 100
+                                    percentage = config.value
+                                } else {
+                                    distributionAmount = percentagePower * defaultPercentage / 100
                                     percentage = defaultPercentage
                                 }
                                 distributeProgramPower(
                                     currentProgramNode, 
                                     childNode, 
-                                    programPower * percentage / 100, 
+                                    distributionAmount, 
                                     0, 
                                     percentage, 
                                     generation
@@ -323,13 +342,24 @@ function newGovernanceUtilitiesDecendentProgram() {
                     }
                     case userNodeType: {
                         let previousOutgoing = node.payload[programPropertyName].outgoingPower
-                        node.payload[programPropertyName].outgoingPower = node.payload.parentNode.payload[programPropertyName].outgoingPower * percentage / 100
+                        node.payload[programPropertyName].outgoingPower = node.payload[programPropertyName].outgoingPower + programPower
 
                         drawUserNode(node, percentage)
                         if (node.payload.referenceParent !== undefined) {
                             /*
+                            Here we will validate users are not referencing themselves as a program beneficiary.
+                            */
+                            let currentUserProfile = UI.projects.visualScripting.utilities.hierarchy.getHiriarchyHead(currentProgramNode)
+                            let referencedUserProfile = UI.projects.visualScripting.utilities.hierarchy.getHiriarchyHead(node.payload.referenceParent)
+                            if (referencedUserProfile === undefined || currentUserProfile === undefined) { return }
+                            if (currentUserProfile.id === referencedUserProfile.id) {
+                                node.payload.uiObject.setErrorMessage('Referencing your own profile is not allowed.')
+                                return
+                            }
+                                                       
+                            /*
                             We want to accumulate the usedPower, but to keep the right balance, everytime we add to it the outgoingPower
-                            we need to substract the previous one, since this migth be executed at every user profile and also recurisvely.
+                            we need to subtract the previous one, since this might be executed at every user profile and also recursively.
                             */
                             currentProgramNode.payload[programPropertyName].usedPower = currentProgramNode.payload[programPropertyName].usedPower - previousOutgoing
                             currentProgramNode.payload[programPropertyName].usedPower = currentProgramNode.payload[programPropertyName].usedPower + node.payload[programPropertyName].outgoingPower
@@ -403,12 +433,7 @@ function newGovernanceUtilitiesDecendentProgram() {
 
                 node.payload.uiObject.setValue(outgoingPowerText + ' ' + programPowerName, UI.projects.governance.globals.designer.SET_VALUE_COUNTER)
 
-                node.payload.uiObject.percentageAngleOffset = 180
-                node.payload.uiObject.percentageAtAngle = true
-
-                node.payload.uiObject.setPercentage(percentage,
-                    UI.projects.governance.globals.designer.SET_PERCENTAGE_COUNTER
-                    )
+                UI.projects.governance.utilities.nodeCalculations.drawPercentage(node, percentage, 180)
 
                 node.payload.uiObject.statusAngleOffset = 0
                 node.payload.uiObject.statusAtAngle = true

@@ -38,6 +38,8 @@ function newTimeFrameScale() {
 
     let limitingContainer
 
+    let configStyle
+
     setupContainer()
 
     let wheelDeltaDirection
@@ -230,7 +232,7 @@ function newTimeFrameScale() {
 
     function onViewportZoomChanged(event) {
         if (event !== undefined) { // it is undefined when the level is just being animated.
-            if (event.shiftKey === false || event.shiftKey === undefined) { return } // with no shft key pressed, no automatic change in scale
+            if (event.shiftKey === false || event.shiftKey === undefined) { return } // with no shift key pressed, no automatic change in scale
             let currentTimeFrame = thisObject.timeFrame
             let timeFrame = recalculatePeriod(event.newLevel)
             if (timeFrame !== currentTimeFrame) {
@@ -394,11 +396,32 @@ function newTimeFrameScale() {
         let label2 = label[0]
         let label3 = label[1].toUpperCase()
 
-        let icon1 = UI.projects.foundations.spaces.designSpace.getIconByProjectAndType(thisObject.payload.node.payload.parentNode.project, thisObject.payload.node.payload.parentNode.type)
-        let icon2 = UI.projects.foundations.spaces.designSpace.getIconByProjectAndType(thisObject.payload.node.project, thisObject.payload.node.type)
+        let icon1 = UI.projects.workspaces.spaces.designSpace.getIconByProjectAndType(thisObject.payload.node.payload.parentNode.project, thisObject.payload.node.payload.parentNode.type)
+        let icon2 = UI.projects.workspaces.spaces.designSpace.getIconByProjectAndType(thisObject.payload.node.project, thisObject.payload.node.type)
 
-        let backgroundColor = UI_COLOR.BLACK
+        // This controls the color of the timeFrame scale at the bottom of a chart.
+        let chartingSpaceNode = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadByNodeType('Charting Space')
+        if (chartingSpaceNode !== undefined) {
+            if (chartingSpaceNode.spaceStyle !== undefined) {
+                configStyle = JSON.parse(chartingSpaceNode.spaceStyle.config)
+            } else {
+                configStyle = undefined
+            }
+        } else {
+            configStyle = undefined
+        }
 
-        drawScaleDisplay(label1, label2, label3, 0, 0, 0, icon1, icon2, thisObject.container, backgroundColor)
+        if (configStyle === undefined || configStyle.timeFrameScalePanelColor === undefined) {
+            let backgroundColor = UI_COLOR.BLACK
+            drawScaleDisplay(label1, label2, label3, 0, 0, 0, icon1, icon2, thisObject.container, backgroundColor)
+        } else {
+            let backgroundColor = eval(configStyle.timeFrameScalePanelColor)
+            if (configStyle.timeFramePanelLabelColor !== undefined) {
+                let textColor = eval(configStyle.timeFramePanelLabelColor)
+                drawScaleDisplay(label1, label2, label3, 0, 0, 0, icon1, icon2, thisObject.container, backgroundColor, textColor)
+            } else {
+                drawScaleDisplay(label1, label2, label3, 0, 0, 0, icon1, icon2, thisObject.container, backgroundColor)
+            }
+        }
     }
 }

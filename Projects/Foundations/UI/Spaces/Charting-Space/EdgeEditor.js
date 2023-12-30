@@ -22,6 +22,7 @@ function newEdgeEditor() {
 
     thisObject.container.isDraggeable = true
     thisObject.container.isClickeable = false
+    thisObject.container.isDoubleClickable = true
     thisObject.container.isWheelable = false
     thisObject.container.detectMouseOver = true
 
@@ -34,6 +35,7 @@ function newEdgeEditor() {
     let onMouseOverEventSubscriptionId
     let onMouseNotOverEventSubscriptionId
     let onDragStartedEventSubscriptionId
+    let configStyle
 
     let mouse = {
         position: {
@@ -58,14 +60,13 @@ function newEdgeEditor() {
         height: 0
     }
 
-    let doubleClickCounter = 0
-
     return thisObject
 
     function finalize() {
         thisObject.container.eventHandler.stopListening(onMouseOverEventSubscriptionId)
         thisObject.container.eventHandler.stopListening(onMouseNotOverEventSubscriptionId)
         thisObject.container.eventHandler.stopListening(onDragStartedEventSubscriptionId)
+        thisObject.container.eventHandler.stopListening(onDoubleClickEventSubscriptionId)
 
         thisObject.container.finalize()
         thisObject.container = undefined
@@ -89,6 +90,7 @@ function newEdgeEditor() {
         onMouseOverEventSubscriptionId = thisObject.container.eventHandler.listenToEvent('onMouseOver', onMouseOver)
         onMouseNotOverEventSubscriptionId = thisObject.container.eventHandler.listenToEvent('onMouseNotOver', onMouseNotOver)
         onDragStartedEventSubscriptionId = thisObject.container.eventHandler.listenToEvent('onDragStarted', onDragStarted)
+        onDoubleClickEventSubscriptionId = thisObject.container.eventHandler.listenToEvent('onDoubleClick', onDoubleClick)
     }
 
     function onMouseOver(event) {
@@ -117,7 +119,6 @@ function newEdgeEditor() {
     }
 
     function onDoubleClick(event) {
-        doubleClickCounter = 0
         if (UI.projects.foundations.spaces.chartingSpace.viewport.zoomLevel === UI.projects.foundations.globals.zoom.DOUBLE_CLICK_ZOOM_OUT_LEVEL) {
             UI.projects.foundations.spaces.chartingSpace.viewport.displaceToContainer(thisObject.container.parentContainer)
             UI.projects.foundations.spaces.chartingSpace.viewport.zoomAtCenter(UI.projects.foundations.globals.zoom.DOUBLE_CLICK_ZOOM_IN_LEVEL)
@@ -130,15 +131,6 @@ function newEdgeEditor() {
     }
 
     function onDragStarted(event) {
-        if (event.buttons === 1) {
-            if (doubleClickCounter > 0) {
-                onDoubleClick(event)
-                return
-            } else {
-                doubleClickCounter = 50
-            }
-        }
-
         mouseWhenDragStarted = {
             position: {
                 x: event.x,
@@ -274,20 +266,15 @@ function newEdgeEditor() {
                 case GET_CONTAINER_PURPOSE.DRAGGING:
                     return thisObject.container
                     break
+                case GET_CONTAINER_PURPOSE.DOUBLE_CLICK:
+                    return thisObject.container
+                    break
             }
         }
     }
 
     function physics() {
         draggingPhysics()
-        doubleClickPhysics()
-    }
-
-    function doubleClickPhysics() {
-        doubleClickCounter--
-        if (doubleClickCounter < 0) {
-            doubleClickCounter = 0
-        }
     }
 
     function draggingPhysics() {
@@ -717,14 +704,45 @@ function newEdgeEditor() {
         drawEdge('left')
 
         function drawEdge(edgeType) {
+            /**Here we control the colors of each time machines frame. */
+            let chartingSpaceNode = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadByNodeType('Charting Space')
+            if (chartingSpaceNode !== undefined) {
+                if (chartingSpaceNode.spaceStyle !== undefined) {
+                    configStyle = JSON.parse(chartingSpaceNode.spaceStyle.config)
+                } else {
+                    configStyle = undefined
+                }
+            } else {
+                configStyle = undefined
+            }
             if (whereIsMouseOver === edgeType && thisObject.isMouseOver === true) {
                 browserCanvasContext.lineWidth = lineWidth
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.RUSTED_RED + ', ' + OPACITY + ')'
-                browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
+                
+                if (configStyle === undefined || configStyle.onMouseFrameColor === undefined) {
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.RUSTED_RED + ', ' + OPACITY + ')'
+                    browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
+                } else {
+                    let thisColor = eval(configStyle.onMouseFrameColor)
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.RUSTED_RED + ', ' + OPACITY + ')'
+                    browserCanvasContext.fillStyle = 'rgba(' + thisColor + ', ' + OPACITY + ')'
+                }
             } else {
                 browserCanvasContext.lineWidth = lineWidth
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.RUSTED_RED + ', ' + OPACITY + ')'
-                browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.DARK_TURQUOISE + ', ' + OPACITY + ')'
+                if (configStyle === undefined || configStyle.machineFrameColor === undefined) {
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.RUSTED_RED + ', ' + OPACITY + ')'
+                    browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.DARK_TURQUOISE + ', ' + OPACITY + ')'
+                } else {
+                    let thisColor = eval(configStyle.machineFrameColor)
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.RUSTED_RED + ', ' + OPACITY + ')'
+
+                    // This controls the opacity of the time machine frame.
+                    if (configStyle.machineFrameOpacity !== undefined) {
+                        let thisOpacity = eval(configStyle.machineFrameOpacity)
+                        browserCanvasContext.fillStyle = 'rgba(' + thisColor + ', ' + thisOpacity + ')'
+                    } else {
+                        browserCanvasContext.fillStyle = 'rgba(' + thisColor + ', ' + OPACITY + ')'
+                    }
+                }
             }
             browserCanvasContext.fill()
             browserCanvasContext.stroke()

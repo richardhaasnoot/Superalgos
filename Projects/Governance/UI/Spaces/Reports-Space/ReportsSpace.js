@@ -15,6 +15,7 @@ function newGobernanceReportsSpace() {
         claims: undefined,
         votes: undefined,
         staking: undefined,
+        liquidity: undefined,
         delegations: undefined,
         github: undefined,
         airdrop: undefined,
@@ -23,6 +24,7 @@ function newGobernanceReportsSpace() {
         features: undefined,
         positions: undefined,
         mining: undefined,
+        computing: undefined,
         tablesSortingOrders: undefined,
         commandInterface: undefined,
         changeTableSortingOrder,
@@ -91,6 +93,9 @@ function newGobernanceReportsSpace() {
         thisObject.staking.finalize()
         thisObject.staking = undefined
 
+        thisObject.liquidity.finalize()
+        thisObject.liquidity = undefined
+
         thisObject.delegation.finalize()
         thisObject.delegation = undefined
 
@@ -115,6 +120,9 @@ function newGobernanceReportsSpace() {
         thisObject.mining.finalize()
         thisObject.mining = undefined
 
+        thisObject.computing.finalize()
+        thisObject.computing = undefined
+
         thisObject.commandInterface.finalize()
         thisObject.commandInterface = undefined
 
@@ -123,9 +131,9 @@ function newGobernanceReportsSpace() {
 
     function initialize() {
         /*
-        If the workspace is not related to governance, then we exit the Intialize Function
+        If the workspace is not related to governance, then we exit the initialize Function
         */
-        let governanceProject = UI.projects.foundations.spaces.designSpace.workspace.getProjectHeadByNodeType('Governance Project')
+        let governanceProject = UI.projects.workspaces.spaces.designSpace.workspace.getProjectHeadByNodeType('Governance Project')
         if (governanceProject === undefined) { return }
 
         thisObject.container = newContainer()
@@ -150,6 +158,7 @@ function newGobernanceReportsSpace() {
         thisObject.claims = newGovernanceReportsClaims()
         thisObject.votes = newGovernanceReportsVotes()
         thisObject.staking = newGovernanceReportsStaking()
+        thisObject.liquidity = newGovernanceReportsLiquidity()
         thisObject.delegation = newGovernanceReportsDelegation()
         thisObject.github = newGovernanceReportsGithub()
         thisObject.airdrop = newGovernanceReportsAirdrop()
@@ -158,6 +167,7 @@ function newGobernanceReportsSpace() {
         thisObject.features = newGovernanceReportsFeatures()
         thisObject.positions = newGovernanceReportsPositions()
         thisObject.mining = newGovernanceReportsMining()
+        thisObject.computing = newGovernanceReportsComputing()
 
         thisObject.commandInterface.initialize()
         thisObject.reportsPage.initialize()
@@ -171,6 +181,7 @@ function newGobernanceReportsSpace() {
         thisObject.claims.initialize()
         thisObject.votes.initialize()
         thisObject.staking.initialize()
+        thisObject.liquidity.initialize()
         thisObject.delegation.initialize()
         thisObject.github.initialize()
         thisObject.airdrop.initialize()
@@ -179,6 +190,7 @@ function newGobernanceReportsSpace() {
         thisObject.features.initialize()
         thisObject.positions.initialize()
         thisObject.mining.initialize()
+        thisObject.computing.initialize()
 
         setupSidePanelTab()
 

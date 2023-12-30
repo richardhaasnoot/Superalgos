@@ -2,7 +2,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
     /*
     This module contains the functions to aggregate data into elements with
     begin and end properties. It is used by both the One Min to Market
-    and One Min to Daily frameworks as a common place to haave functions
+    and One Min to Daily frameworks as a common place to have functions
     used at both of them.
     */
     const MODULE_NAME = "From One Min To Multi Time Frame Functions"
@@ -25,9 +25,9 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
         callBackFunction
     ) {
         /*
-        This Framework have a few contraints that we are going to check right here.
+        This Framework have a few constraints that we are going to check right here.
         One of them is the fact that it can only accept one data dependency. The 
-        reason why is because the purpose of this framwork is to produce a transformation
+        reason why is because the purpose of this framework is to produce a transformation
         between one dataset type (One-Min) to another dataset type (Multi-Time-Frame-Market).
         To do that it can only handle one dependency and it will only produce one output.
 
@@ -48,7 +48,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
             node.dataDependency = dataDependenciesModule.curatedDependencyNodeArray[0]
         }
 
-        let outputDatasets = TS.projects.foundations.utilities.nodeFunctions.nodeBranchToArray(
+        let outputDatasets = SA.projects.visualScripting.utilities.nodeFunctions.nodeBranchToArray(
             TS.projects.foundations.globals.taskConstants.TASK_NODE.bot.processes[processIndex].referenceParent.processOutput, 'Output Dataset'
         )
 
@@ -90,7 +90,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                 */
                 statusReport = statusDependenciesModule.reportsByMainUtility.get('Market Starting Point')
 
-                if (statusReport === undefined) { // This means the status report does not exist, that could happen for instance at the begining of a month.
+                if (statusReport === undefined) { // This means the status report does not exist, that could happen for instance at the beginning of a month.
                     TS.projects.foundations.globals.loggerVariables.VARIABLES_BY_PROCESS_INDEX_MAP.get(processIndex).BOT_MAIN_LOOP_LOGGER_MODULE_OBJECT.write(MODULE_NAME,
                         "[WARN] getContextVariables -> detectWhereTheMarketBegins-> Status Report does not exist. Retrying Later. ")
                     callBackFunction(TS.projects.foundations.globals.standardResponses.DEFAULT_RETRY_RESPONSE)
@@ -102,7 +102,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                         processIndex,
                         MODULE_NAME,
                         'Dataset Type Standard Converter',
-                        { errorDetails: "getContextVariables -> detectWhereTheMarketBegins -> Can not continue because dependecy Status Report is corrupt. " },
+                        { errorDetails: "getContextVariables -> detectWhereTheMarketBegins -> Can not continue because dependency Status Report is corrupt. " },
                         'Status Report Is Corrupt',
                         TS.projects.foundations.globals.taskConstants.TASK_NODE.bot.processes[processIndex].referenceParent.processOutput
                     )
@@ -135,7 +135,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                 */
                 statusReport = statusDependenciesModule.reportsByMainUtility.get('Market Ending Point')
 
-                if (statusReport === undefined) { // This means the status report does not exist, that could happen for instance at the begining of a month.
+                if (statusReport === undefined) { // This means the status report does not exist, that could happen for instance at the beginning of a month.
                     TS.projects.foundations.globals.loggerVariables.VARIABLES_BY_PROCESS_INDEX_MAP.get(processIndex).BOT_MAIN_LOOP_LOGGER_MODULE_OBJECT.write(MODULE_NAME,
                         "[WARN] getContextVariables -> detectWhereTheMarketEnds-> Status Report does not exist. Retrying Later. ")
                     callBackFunction(TS.projects.foundations.globals.standardResponses.DEFAULT_RETRY_RESPONSE)
@@ -147,7 +147,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                         processIndex,
                         MODULE_NAME,
                         'Dataset Type Standard Converter',
-                        { errorDetails: "getContextVariables -> detectWhereTheMarketEnds -> Can not continue because dependecy Status Report is corrupt. " },
+                        { errorDetails: "getContextVariables -> detectWhereTheMarketEnds -> Can not continue because dependency Status Report is corrupt. " },
                         'Status Report Is Corrupt',
                         TS.projects.foundations.globals.taskConstants.TASK_NODE.bot.processes[processIndex].referenceParent.processOutput
                     )
@@ -179,7 +179,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                 */
                 statusReport = statusDependenciesModule.reportsByMainUtility.get('Self Reference')
 
-                if (statusReport === undefined) { // This means the status report does not exist, that could happen for instance at the begining of a month.
+                if (statusReport === undefined) { // This means the status report does not exist, that could happen for instance at the beginning of a month.
                     TS.projects.foundations.globals.loggerVariables.VARIABLES_BY_PROCESS_INDEX_MAP.get(processIndex).BOT_MAIN_LOOP_LOGGER_MODULE_OBJECT.write(MODULE_NAME,
                         "[WARN] getContextVariables -> Status Report does not exist. Retrying Later. ")
                     callBackFunction(TS.projects.foundations.globals.standardResponses.DEFAULT_RETRY_RESPONSE)
@@ -191,7 +191,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                         processIndex,
                         MODULE_NAME,
                         'Dataset Type Standard Converter',
-                        { errorDetails: "getContextVariables -> getOwnStatusReport -> Can not continue because dependecy Status Report is corrupt. " },
+                        { errorDetails: "getContextVariables -> getOwnStatusReport -> Can not continue because dependency Status Report is corrupt. " },
                         'Status Report Is Corrupt',
                         TS.projects.foundations.globals.taskConstants.TASK_NODE.bot.processes[processIndex].referenceParent.processOutput
                     )
@@ -203,13 +203,13 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
             if (thisReport.lastFile !== undefined) {
                 /*
                 We get in here when the report already exists, meaning that this process
-                has succesfully ran before at least once.
+                has successfully ran before at least once.
                 */
                 contextVariables.beginingOfMarket = new Date(thisReport.beginingOfMarket)
 
-                if (contextVariables.beginingOfMarket.valueOf() !== contextVariables.datetimeBeginingOfMarketFile.valueOf()) { // Reset Mechanism for Begining of the Market
+                if (contextVariables.beginingOfMarket.valueOf() !== contextVariables.datetimeBeginingOfMarketFile.valueOf()) { // Reset Mechanism for Beginning of the Market
                     TS.projects.foundations.globals.loggerVariables.VARIABLES_BY_PROCESS_INDEX_MAP.get(processIndex).BOT_MAIN_LOOP_LOGGER_MODULE_OBJECT.write(MODULE_NAME,
-                        "[INFO] getContextVariables -> getOwnStatusReport-> Reset Mechanism for Begining of the Market Activated.")
+                        "[INFO] getContextVariables -> getOwnStatusReport-> Reset Mechanism for Beginning of the Market Activated.")
 
                     contextVariables.beginingOfMarket = new Date(
                         contextVariables.datetimeBeginingOfMarketFile.getUTCFullYear() + "-" +
@@ -243,7 +243,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
             } else {
                 /*
                 We get in here when the report does not exist, meaning that this process
-                has never ran succesfully before at least once.
+                has never ran successfully before at least once.
                 */
                 contextVariables.beginingOfMarket = new Date(
                     contextVariables.datetimeBeginingOfMarketFile.getUTCFullYear() + "-" +
@@ -352,7 +352,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
         callBackFunction
     ) {
         /*
-        Here is where we read Data Depnedency's files and add their content to whatever
+        Here is where we read Data Dependency's files and add their content to whatever
         we already have in our arrays in-memory. In this way the process will run as 
         many days needed and it should only stop when it reaches
         the head of the market.
@@ -394,14 +394,14 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                         TS.projects.foundations.globals.loggerVariables.VARIABLES_BY_PROCESS_INDEX_MAP.get(processIndex).BOT_MAIN_LOOP_LOGGER_MODULE_OBJECT.write(MODULE_NAME,
                             "[WARN] nextDependencyDailyFile -> onFileReceived -> Error Parsing JSON -> err = " + err.stack)
                         TS.projects.foundations.globals.loggerVariables.VARIABLES_BY_PROCESS_INDEX_MAP.get(processIndex).BOT_MAIN_LOOP_LOGGER_MODULE_OBJECT.write(MODULE_NAME,
-                            "[WARN] nextDependencyDailyFile -> onFileReceived -> Asuming this is a temporary situation. Requesting a Retry.")
+                            "[WARN] nextDependencyDailyFile -> onFileReceived -> Assuming this is a temporary situation. Requesting a Retry.")
                         callBackFunction(TS.projects.foundations.globals.standardResponses.DEFAULT_RETRY_RESPONSE)
                         return
                     }
                 } else {
                     if (err.message === 'File does not exist.' || err.code === 'The specified key does not exist.') {
                         /*
-                        When a Dependency Daily File does not exist, we will asume that the process
+                        When a Dependency Daily File does not exist, we will assume that the process
                         of fetching data was not ran at that day and that day was skipped. In such a situation
                         we will produce an empty array so that this process can continue without getting stuck
                         at this date where a file is missing.
@@ -443,7 +443,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                 if (property.config.isString === true) {
                     fileContent = fileContent + propertySeparator + '"' + element[property.config.codeName] + '"'
                 } else {
-                    fileContent = fileContent + propertySeparator + element[property.config.codeName]
+                    fileContent = fileContent + propertySeparator + JSON.stringify(element[property.config.codeName])
                 }
                 propertySeparator = ","
             }
@@ -469,7 +469,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
         const TOTAL_OUTPUT_ELEMENTS = INPUT_FILE_TIME_FRAME_VALUE / TIME_FRAME_VALUE
         const STARTING_DATE_VALUE = contextVariables.datetimeLastProducedFile.valueOf()
         /*
-        The algorithm that follows is going to agregate elements of 1 min timeFrame 
+        The algorithm that follows is going to aggregate elements of 1 min timeFrame
         read from Data Dependency File, into elements of each timeFrame. 
         */
         for (let i = 0; i < TOTAL_OUTPUT_ELEMENTS; i++) {
@@ -481,20 +481,67 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
             let outputElement = {}                  // This will be the object that we will eventually save.
             let outputElementAverage = {}           // We will use this object to help us aggregate values by calculating an average.
             /*
+            Check that the record properties for this element have a valid aggreagation method before we begin
+            */
+            checkAggregationMethods()
+
+            function checkAggregationMethods() {
+                // Throw an error if a record property does not have a supported aggregation method. Excluding begin and end
+                for (let j = 0; j < node.outputDataset.referenceParent.parentNode.record.properties.length; j++) {
+                    let property = node.outputDataset.referenceParent.parentNode.record.properties[j]
+                    let name = property.config.codeName
+                    let method = property.config.aggregationMethod
+                    if (name == 'begin' ||
+                        name == 'end' ||
+                        method == 'First' ||
+                        method == 'Last' ||
+                        method == 'Min'  ||
+                        method == 'Max'  ||
+                        method == 'Sum'  ||
+                        method == 'Avg'  ||
+                        method == 'Concat') { 
+                        continue 
+                    } else {
+                        let errMessage
+                        if (method === undefined ) {
+                            errMessage = "No aggregation method defined!\n" +
+                                         "Please add an aggregationMethod config property to the record property node of: " +
+                                         " this process.\n" +
+                                         property.config.codeName +
+                                        "Accepted aggregation methods are: First, Last, Min, Max, Sum, Avg, Concat"
+                        } else {
+                                    errMessage = "unsupported aggregation method -> " + property.config.aggregationMethod +
+                                    " in record property: " + property.config.codeName
+                                }
+                        SA.logger.error(errMessage)
+                        throw new Error(errMessage)            
+                    }
+                }
+            }
+
+            /*
             Set the output element the default values for each of it's properties.
             */
             for (let j = 0; j < node.outputDataset.referenceParent.parentNode.record.properties.length; j++) {
                 let property = node.outputDataset.referenceParent.parentNode.record.properties[j]
 
-                if (property.config.isString === true || property.config.isDate === true) {
+                if (property.config.isString === true) {
+                    outputElement[property.config.codeName] = ""          // Default Value to String
+                } 
+                else if (property.config.isDate === true) {
                     outputElement[property.config.codeName] = ""            // Default Value
-                } else {
-                    outputElement[property.config.codeName] = 0             // Default Value
-                }
-                if (property.config.isBoolean === true) {
+                } 
+                else if (property.config.isBoolean === true) {
                     outputElement[property.config.codeName] = false         // Default Value
                 }
+                else if (property.config.isArray === true) {
+                    outputElement[property.config.codeName] = []            // Default Value
+                }
+                else {
+                    outputElement[property.config.codeName] = 0             // Default Value
+                }
             }
+            
             /*
             Setting the begin and end for this element.
             */
@@ -543,7 +590,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                     element.timestamp = (new Date(element.timestamp)).valueOf()
                 }
                 /* 
-                Here we discard all the elements out of range based on the timestamp propertiy of
+                Here we discard all the elements out of range based on the timestamp property of
                 the Data Dependency element. 
                 */
                 if (
@@ -561,6 +608,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                     aggregationMethodMax()
                     aggregationMethodSum()
                     aggregationMethodAvg()
+                    aggregationMethodConcat()
 
                     saveElement = true
 
@@ -583,7 +631,7 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                         /* 
                         This is the LAST type of aggregation.
  
-                        Everything that follows will be set for each element overiding the previous
+                        Everything that follows will be set for each element overriding the previous
                         ones, so only the last values will survive. 
                         */
                         for (let j = 0; j < node.outputDataset.referenceParent.parentNode.record.properties.length; j++) {
@@ -603,9 +651,13 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                         */
                         for (let j = 0; j < node.outputDataset.referenceParent.parentNode.record.properties.length; j++) {
                             let property = node.outputDataset.referenceParent.parentNode.record.properties[j]
-                            if (property.config.aggregationMethod === 'Min' || saveElement === false) {
-                                if (outputElement[property.config.codeName] === 0) { // Set initial value if default value is present
-                                    outputElement[property.config.codeName] = record.map.get(property.config.codeName)
+                            if (property.config.aggregationMethod === 'Min') {
+                                if (saveElement === false) {
+                                    if (outputElement[property.config.codeName] === 0) { // Set initial value if default value is present
+                                        outputElement[property.config.codeName] = record.map.get(property.config.codeName)
+                                    } else if (record.map.get(property.config.codeName) < outputElement[property.config.codeName]) {
+                                        outputElement[property.config.codeName] = record.map.get(property.config.codeName)
+                                    }
                                 } else if (record.map.get(property.config.codeName) < outputElement[property.config.codeName]) {
                                     outputElement[property.config.codeName] = record.map.get(property.config.codeName)
                                 }
@@ -657,6 +709,18 @@ exports.newFoundationsFunctionLibrariesFromOneMinToMultiTimeFrameFunctions = fun
                                 outputElementAverage[property.config.codeName].count = outputElementAverage[property.config.codeName].count + 1
 
                                 outputElement[property.config.codeName] = outputElementAverage[property.config.codeName].sum / outputElementAverage[property.config.codeName].count
+                            }
+                        }
+                    }
+
+                    function aggregationMethodConcat() {
+                        /*
+                        This is the Concat type of aggregation.
+                        */
+                        for (let j = 0; j < node.outputDataset.referenceParent.parentNode.record.properties.length; j++) {
+                            let property = node.outputDataset.referenceParent.parentNode.record.properties[j]
+                            if (property.config.aggregationMethod === 'Concat') {
+                                outputElement[property.config.codeName] = outputElement[property.config.codeName].concat(record.map.get(property.config.codeName))
                             }
                         }
                     }

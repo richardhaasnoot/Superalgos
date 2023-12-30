@@ -1,11 +1,12 @@
-/* Global Constatns */
+/* Global Constants */
 
 let canvas
 let PROJECTS_SCHEMA
 let SCHEMAS_BY_PROJECT = new Map()
 /* New Root object*/
 let UI = {
-    projects: {}
+    projects: {},
+    environment: {}
 }
 
 /* User Interface Colors */
@@ -56,7 +57,11 @@ const UI_COLOR = {
     JUNGLE_GREEN: "50,175,162",
     LIGHT_PINK: "254,180,200",
     JUNGLE_LIGHT: "165,223,210",
-    TRUE_ORANGE: "255,160,10"
+    TRUE_ORANGE: "255,160,10",
+    CARMINE_PINK: "240, 80, 52",
+    MANGO_TANGO: "255, 139, 57",
+    GARGOYLE_GAS: "255, 235, 66",
+    CHARLESTON_GREEN: "42, 46, 49"
 };
 
 /* User Interface Fonts */
@@ -162,6 +167,7 @@ dailyTimeFramesArray = JSON.parse(dailyTimeFramesArray);
 let SHOW_ANIMATION_PERFORMACE = false;
 let MENU_ITEM_ON_FOCUS
 let EDITOR_ON_FOCUS
+let DOCS_PAGE_ON_FOCUS
 
 let testUser = window.localStorage.getItem("test_user")
 let LOGGED_IN_USER_LOCAL_STORAGE_KEY
@@ -203,9 +209,9 @@ const _1_MINUTE_IN_MILISECONDS = 1 * 60 * 1000;
 
 
 
-let NEW_SESSION_INITIAL_DATE = new Date();  // This value will be overwritten at the UI.projects.foundations.spaces.chartingSpace.viewport.initialize if the user had a prevous session with this same browser.
+let NEW_SESSION_INITIAL_DATE = new Date();  // This value will be overwritten at the UI.projects.foundations.spaces.chartingSpace.viewport.initialize if the user had a previous session with this same browser.
 let INITIAL_ZOOM_LEVEL = -28.25       // This is the zoom level at the view port in which the APP starts.
-let INITIAL_TIME_PERIOD = ONE_DAY_IN_MILISECONDS  // This value will be overwritten at the UI.projects.foundations.spaces.chartingSpace.viewport.initialize if the user had a prevous session with this same browser.
+let INITIAL_TIME_PERIOD = ONE_DAY_IN_MILISECONDS  // This value will be overwritten at the UI.projects.foundations.spaces.chartingSpace.viewport.initialize if the user had a previous session with this same browser.
 let VERY_LARGE_NUMBER = 100000000000000
 
 const TOP_MARGIN = 0
@@ -245,7 +251,7 @@ const PERIOD_05_MIN = "05-min";
 const PERIOD_01_MIN = "01-min";
 
 /*
-We define here the size of the chartingSpace. It has to bee enough big in order to accomodate all the charts we expect to display in this space.
+We define here the size of the chartingSpace. It has to bee enough big in order to accommodate all the charts we expect to display in this space.
 */
 
 const TIME_MACHINE_WIDTH = 8;
@@ -259,6 +265,11 @@ let PANORAMA_WAS_PANNED = false
 let CURRENT_PANORAMA_POSITION = 0
 
 let CAN_SPACES_DRAW = false // This global variable regulates when spaces can or can not draw their contents.
+
+const codeEditorType = {
+    CODE: "code",
+    CONFIG: "config"
+}
 
 function toRadians(angle) {
     return angle * (Math.PI / 180);

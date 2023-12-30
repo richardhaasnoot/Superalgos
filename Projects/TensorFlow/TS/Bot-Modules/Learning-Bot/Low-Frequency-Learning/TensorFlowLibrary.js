@@ -1,6 +1,6 @@
 exports.newTensorFlowBotModulesTensorFlowLibrary = function (processIndex) {
 
-    const MODULE_NAME = 'Time Series Forcasting Tensor Flow JS Learning Algorithm'
+    const MODULE_NAME = 'Time Series Forecasting Tensor Flow JS Learning Algorithm'
     let thisObject = {
         loadModel: loadModel,
         saveModel: saveModel,
@@ -119,7 +119,7 @@ exports.newTensorFlowBotModulesTensorFlowLibrary = function (processIndex) {
 
     async function saveModel() {
         let fileLocation = getModelPath();
-        /* If necesary a folder or folders are created before writing the file to disk: */
+        /* If necessary a folder or folders are created before writing the file to disk: */
         SA.projects.foundations.utilities.filesAndDirectories.mkDirByPathSync(fileLocation);
 
         const savedModel = await tensorFlowModelsManager.model.save('file://' + fileLocation);
@@ -204,7 +204,7 @@ exports.newTensorFlowBotModulesTensorFlowLibrary = function (processIndex) {
                 /* We will store at the Learning Engine data structure the labels we have calculated. */
                 for (let i = 0; i < layersModel.outputLayer.outputLabels.dataLabels.length; i++) {
                     if (learningEngine.labels.labels[i] === undefined) { 
-                        console.log("Warning: learning engine has no space to record label #" + (i+1));
+                        SA.logger.warn("Warning: learning engine has no space to record label #" + (i+1));
                         continue;
                     }
                     learningEngine.labels.labels[i].labelValue.value = labels[i];
@@ -235,7 +235,7 @@ exports.newTensorFlowBotModulesTensorFlowLibrary = function (processIndex) {
                         prediction = 0
                     }
                     if (learningEngine.predictions.predictions[i] === undefined) { 
-                        console.log("Warning: learning engine has no space to record prediction #" + (i + 1));
+                        SA.logger.warn("Warning: learning engine has no space to record prediction #" + (i + 1));
                         continue;
                     }
                     learningEngine.predictions.predictions[i].predictionValue.value = prediction

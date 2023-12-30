@@ -1,7 +1,19 @@
 {
     "type": "Annualized Rate Of Return",
     "definition": {
-        "text": "Annualized rate of return is the equivalent ROI scaled to one year."
+        "text": "Annualized rate of return is the equivalent ROI scaled to one year.",
+        "translations": [
+            {
+                "language": "RU",
+                "text": "Annualized Rate Of Return - это эквивалентная рентабельность инвестиций в один год.",
+                "updated": 1638623262847
+            },
+            {
+                "language": "TR",
+                "text": "Yıllık getiri oranı, bir yıla ölçeklenen eşdeğer yatırım getirisidir.",
+                "updated": 1652018465870
+            }
+        ]
     },
     "paragraphs": [
         {
@@ -10,11 +22,35 @@
         },
         {
             "style": "Text",
-            "text": "In other words, it is the equivalent annual return received over a given period."
+            "text": "In other words, it is the equivalent annual return received over a given period.",
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "Другими словами, это эквивалентный годовой доход, полученный за определенный период.",
+                    "updated": 1638623282898
+                },
+                {
+                    "language": "TR",
+                    "text": "Başka bir deyişle, belirli bir süre boyunca alınan eşdeğer yıllık getiridir.",
+                    "updated": 1652018475840
+                }
+            ]
         },
         {
             "style": "Text",
-            "text": "The formula:"
+            "text": "The formula:",
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "Формула:",
+                    "updated": 1638623296446
+                },
+                {
+                    "language": "TR",
+                    "text": "Formül:",
+                    "updated": 1652018494716
+                }
+            ]
         },
         {
             "style": "Javascript",
@@ -23,11 +59,35 @@
         },
         {
             "style": "Text",
-            "text": "In the context of the episode base asset and episode quoted asset, the calculation is done relative to the corresponding assets, and the overall context."
+            "text": "In the context of the episode base asset and episode quoted asset, the calculation is done relative to the corresponding assets, and the overall context.",
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "В контексте базового актива эпизода и указанного актива эпизода расчет выполняется относительно соответствующих активов и общего контекста.",
+                    "updated": 1638623339930
+                },
+                {
+                    "language": "TR",
+                    "text": "Bölüm temel varlık ve bölüm alıntı varlık bağlamında, hesaplama ilgili varlıklara ve genel bağlama göre yapılır.",
+                    "updated": 1652018513579
+                }
+            ]
         },
         {
             "style": "Text",
-            "text": "The formulas:"
+            "text": "The formulas:",
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "Формулы:",
+                    "updated": 1638623349674
+                },
+                {
+                    "language": "TR",
+                    "text": "Formül:",
+                    "updated": 1652018520450
+                }
+            ]
         },
         {
             "style": "Javascript",
@@ -36,7 +96,19 @@
         },
         {
             "style": "Text",
-            "text": "The JavaScript code:"
+            "text": "The JavaScript code:",
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "Код JavaScript:",
+                    "updated": 1638623384490
+                },
+                {
+                    "language": "TR",
+                    "text": "JavaScript kodu:",
+                    "updated": 1652018529789
+                }
+            ]
         },
         {
             "style": "Javascript",
@@ -45,15 +117,51 @@
         },
         {
             "style": "Text",
-            "text": "In the context of the episode statistics, the calculation is done using the consolidated balance, as explained in the profit loss definition."
+            "text": "In the context of the episode statistics, the calculation is done using the consolidated balance, as explained in the profit loss definition.",
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "В контексте статистики по эпизодам расчет выполняется с использованием консолидированного баланса, как объяснено в определении убытка по прибыли.",
+                    "updated": 1638623407530
+                },
+                {
+                    "language": "TR",
+                    "text": "Dönem istatistikleri bağlamında, hesaplama, kar zararı tanımında açıklandığı gibi konsolide bakiye kullanılarak yapılır.",
+                    "updated": 1652018538179
+                }
+            ]
         },
         {
             "style": "Note",
-            "text": "When the context does not refer to either of the assets in particular, then both asset balances are consolidated, and denominated in the quoted asset."
+            "text": "When the context does not refer to either of the assets in particular, then both asset balances are consolidated, and denominated in the quoted asset.",
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "Если контекст не относится ни к одному из активов в частности, то оба баланса активов консолидируются и выражаются в указанном активе.",
+                    "updated": 1638623436030
+                },
+                {
+                    "language": "TR",
+                    "text": "Not: Bağlam özellikle varlıklardan herhangi birine atıfta bulunmadığında, her iki varlık bakiyesi konsolide edilir ve kote varlıkta gösterilir.",
+                    "updated": 1652018555907
+                }
+            ]
         },
         {
             "style": "Text",
-            "text": "The JavaScript code:"
+            "text": "The JavaScript code:",
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "Код JavaScript:",
+                    "updated": 1638623448250
+                },
+                {
+                    "language": "TR",
+                    "text": "JavaScript kodu:",
+                    "updated": 1652018564263
+                }
+            ]
         },
         {
             "style": "Javascript",
@@ -68,17 +176,53 @@
         {
             "style": "Title",
             "text": "Annualized Rate Of Return Configuration",
-            "updated": 1609925322383
+            "updated": 1609925322383,
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "Конфигурация Annualized Rate Of Return",
+                    "updated": 1638623470455
+                },
+                {
+                    "language": "TR",
+                    "text": "Yıllık Getiri Oranı Yapılandırması",
+                    "updated": 1652018573203
+                }
+            ]
         },
         {
             "style": "Subtitle",
             "text": "Properties",
-            "updated": 1609873980538
+            "updated": 1609873980538,
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "Свойства",
+                    "updated": 1638623478781
+                },
+                {
+                    "language": "TR",
+                    "text": "Özellikleri",
+                    "updated": 1652018582143
+                }
+            ]
         },
         {
             "style": "List",
             "text": "initialValue allows resetting the initial state of the node to an arbitrary value.",
-            "updated": 1609875415147
+            "updated": 1609875415147,
+            "translations": [
+                {
+                    "language": "RU",
+                    "text": "initialValue позволяет сбросить начальное состояние узла на произвольное значение.",
+                    "updated": 1638623490865
+                },
+                {
+                    "language": "TR",
+                    "text": "initialValue düğümün başlangıç ​​durumunun keyfi bir değere sıfırlanmasına izin verir.",
+                    "updated": 1652018590081
+                }
+            ]
         }
     ]
 }

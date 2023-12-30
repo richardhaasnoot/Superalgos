@@ -6,8 +6,8 @@ function newGovernanceFunctionLibraryDistributionProcess() {
     }
 
     const DISTRIBUTION_PROCESS_RECALCULATION_DELAY = 5000
-    let loop  
-    
+    let loop
+
     return thisObject
 
     function initialize() {
@@ -18,14 +18,14 @@ function newGovernanceFunctionLibraryDistributionProcess() {
     function finalize() {
         loop = false
     }
- 
+
     function calculate() {
 
-        let pools = UI.projects.foundations.spaces.designSpace.workspace.getHierarchyHeadsByNodeType('Pools')
-        let features = UI.projects.foundations.spaces.designSpace.workspace.getHierarchyHeadsByNodeType('Features')
-        let assets = UI.projects.foundations.spaces.designSpace.workspace.getHierarchyHeadsByNodeType('Assets')
-        let positions = UI.projects.foundations.spaces.designSpace.workspace.getHierarchyHeadsByNodeType('Positions')
-        let userProfiles = UI.projects.foundations.spaces.designSpace.workspace.getHierarchyHeadsByNodeType('User Profile')
+        let pools = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadsByNodeType('Pools')
+        let features = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadsByNodeType('Features')
+        let assets = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadsByNodeType('Assets')
+        let positions = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadsByNodeType('Positions')
+        let userProfiles = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadsByNodeType('User Profile')
         /*
         Here we are going to read the amount of tokens at the blockchain
         and make a first round of distribution so that they can reach 
@@ -36,7 +36,7 @@ function newGovernanceFunctionLibraryDistributionProcess() {
         )
         /*
         Here we will run the Delegation Program, so that all the tokens
-        that are going to be delegated, are transfered to the Delegate's User Profile.
+        that are going to be delegated, are transferred to the Delegate's User Profile.
         */
         UI.projects.governance.functionLibraries.delegationProgram.calculate(
             pools,
@@ -89,7 +89,7 @@ function newGovernanceFunctionLibraryDistributionProcess() {
             userProfiles
         )
         /*
-        Run the Influencer Program
+        Run the Influenced Program
         */
         UI.projects.governance.functionLibraries.influencerProgram.calculate(
             pools,
@@ -109,6 +109,20 @@ function newGovernanceFunctionLibraryDistributionProcess() {
             pools,
             userProfiles
         )
+        /*
+        Run the Bitcoin Factory Computing Program
+        */
+        UI.projects.governance.functionLibraries.computingProgram.calculate(
+            pools,
+            userProfiles
+        )
+        /*
+        Run the Liquidity Program: One per SA Token Market and Exchange if contract address defined in SaToken.js
+        */
+        UI.projects.governance.functionLibraries.liquidityProgram.calculate(
+            pools,
+            userProfiles
+        )                    
         /*
         Run the Claims Program
         */

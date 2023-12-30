@@ -47,6 +47,7 @@ function newLayer() {
     let LOADING_STROKE_STYLE = 'rgba(234, 143, 23, @Opacity)'
     let LOADED_STROKE_STYLE = 'rgba(45, 232, 28, @Opacity)'
     let UNLOADED_STROKE_STYLE = 'rgba(226, 226, 226, @Opacity)'
+    let configStyle
 
     let marketFileProgressBar = {
         value: 0,
@@ -139,7 +140,7 @@ function newLayer() {
     }
 
     function initialize(callBackFunction) {
-        /* Create this objects continer */
+        /* Create this objects container */
         try {
             thisObject.container = newContainer()
             thisObject.container.initialize(MODULE_NAME + ' ' + thisObject.payload.node.id)
@@ -160,25 +161,28 @@ function newLayer() {
                 '->Layer->' +
                 'Data Product->' +
                 'Data Product Folder->Data Product Folder->Data Product Folder->Data Product Folder->Data Product Folder->' +
-                'Bot Products->Data Mine Products->Trading Mine Products->Learning Mine Products->' +
+                'Bot Products->Data Mine Products->Trading Mine Products->Portfolio Mine Products->Learning Mine Products->' +
                 'Market Data Products->Exchange Data Products->' +
-                'Trading Session Reference->Learning Session Reference->' +
+                'Trading Session Reference->Portfolio Session Reference->Learning Session Reference->' +
                 'Market Trading Products->Exchange Trading Products->' +
+                'Market Portfolio Products->Exchange Portfolio Products->' +
                 'Market Learning Products->Exchange Learning Products->' +
-                'Project Data Products->Project Learning Products->Project Trading Products->' +
-                'Data Mines Data->Trading Mines Data->Learning Mines Data->Data Storage->LAN Network Node->' +
+                'Project Data Products->Project Learning Products->Project Portfolio Products->Project Trading Products->' +
+                'Data Mines Data->Trading Mines Data->Portfolio Mines Data->Learning Mines Data->Data Storage->LAN Network Node->' +
                 'Data Storage->LAN Network Node->' +
                 'Backtesting Session->Paper Trading Session->Forward Testing Session->Live Trading Session->' +
+                'Backtesting Portfolio Session->Live Portfolio Session->' +
                 'Back Learning Session->Live Learning Session->' +
                 'Trading System Reference->Trading Engine Reference->Trading System->Trading Engine->' +
+                'Portfolio System Reference->Portfolio Engine Reference->Portfolio System->Portfolio Engine->' +
                 'Learning System Reference->Learning Engine Reference->Learning System->Learning Engine->' +
                 'Market->Market Base Asset->Asset->' +
                 'Market Quoted Asset->Asset->' +
                 'Exchange Markets->Crypto Exchange->' +
                 'Product Definition->' +
                 'Product Definition Folder->Product Definition Folder->Product Definition Folder->Product Definition Folder->Product Definition Folder->' +
-                'Sensor Bot->API Data Fetcher Bot->Indicator Bot->Trading Bot->Learning Bot->' +
-                'Data Mine->Trading Mine->Learning Mine->' +
+                'Sensor Bot->API Data Fetcher Bot->Indicator Bot->Study Bot->Trading Bot->Portfolio Bot->Learning Bot->' +
+                'Data Mine->Trading Mine->Portfolio Mine->Learning Mine->' +
                 'Dataset Definition->' +
                 'Record Definition->Record Property->Record Formula->' +
                 'Data Building Procedure->Procedure Loop->Procedure Javascript Code->Procedure Initialization->Procedure Javascript Code->' +
@@ -189,11 +193,11 @@ function newLayer() {
                 'Polygon->Polygon Condition->Polygon Body->Style->Style Condition->Style->' +
                 'Polygon Border->Style->Style Condition->Style->' +
                 'Polygon Vertex->Point->' +
-                'Image->Image Condition->Image Position->Point->' +
+                'Image->Image Condition->Image Position->Image Formula->Point->' +
                 'Text->Text Condition->Text Position->Point->Text Formula->Text Style->' +
-                'Plotter Panel->Plotter Panel Javascript Code->Panel Data->Data Formula->Text Style->' +
+                'Plotter Panel->Plotter Panel Javascript Code->Panel Data->Panel Data Javascript Code->Data Formula->Text Style->' +
                 'Nodes Highlights->Nodes Values->Nodes Errors->Nodes Warnings->Nodes Infos->Nodes Status->Nodes Progress->Nodes Running->Nodes Announcements->Record Values->'
-            thisObject.definition = UI.projects.foundations.functionLibraries.protocolNode.getProtocolNode(thisObject.payload.node, false, true, true, false, false, lightingPath)
+            thisObject.definition = UI.projects.visualScripting.nodeActionFunctions.protocolNode.getProtocolNode(thisObject.payload.node, false, true, true, false, false, lightingPath)
 
             /* Without this I can not continue, because I can not even show error. */
             if (thisObject.payload === undefined) {
@@ -210,58 +214,67 @@ function newLayer() {
             }
 
             /* Here we validate that we have all the needed information */
-            if (UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Data Product', undefined, false, true, true, true) === undefined) {
+            if (UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Data Product', undefined, false, true, true, true) === undefined) {
                 thisObject.payload.uiObject.setErrorMessage('Data Product not Found')
                 return
             }
-            if (UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Market', undefined, false, true, true, true) === undefined) {
+            if (UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Market', undefined, false, true, true, true) === undefined) {
                 thisObject.payload.uiObject.setErrorMessage('Market not Found')
                 return
             }
 
-            thisObject.productDefinition = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Product Definition', undefined, false, true, true, true)
+            thisObject.productDefinition = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Product Definition', undefined, false, true, true, true)
             if (thisObject.productDefinition === undefined) {
                 thisObject.payload.uiObject.setErrorMessage('Product Definition not Found')
                 return
             }
 
-            thisObject.bot = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Sensor Bot', undefined, false, true, true, true)
+            thisObject.bot = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Sensor Bot', undefined, false, true, true, true)
             if (thisObject.bot === undefined) {
-                thisObject.bot = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'API Data Fetcher Bot', undefined, false, true, true, true)
+                thisObject.bot = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'API Data Fetcher Bot', undefined, false, true, true, true)
             }
             if (thisObject.bot === undefined) {
-                thisObject.bot = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Indicator Bot', undefined, false, true, true, true)
+                thisObject.bot = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Indicator Bot', undefined, false, true, true, true)
             }
             if (thisObject.bot === undefined) {
-                thisObject.bot = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Trading Bot', undefined, false, true, true, true)
+                thisObject.bot = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Study Bot', undefined, false, true, true, true)
             }
             if (thisObject.bot === undefined) {
-                thisObject.bot = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Learning Bot', undefined, false, true, true, true)
+                thisObject.bot = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Trading Bot', undefined, false, true, true, true)
+            }
+            if (thisObject.bot === undefined) {
+                thisObject.bot = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Portfolio Bot', undefined, false, true, true, true)
+            }
+            if (thisObject.bot === undefined) {
+                thisObject.bot = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Learning Bot', undefined, false, true, true, true)
             }
             if (thisObject.bot === undefined) {
                 thisObject.payload.uiObject.setErrorMessage('Bot not Found')
                 return
             }
 
-            thisObject.mine = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Data Mine', undefined, false, true, true, true)
+            thisObject.mine = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Data Mine', undefined, false, true, true, true)
             if (thisObject.mine === undefined) {
-                thisObject.mine = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Trading Mine', undefined, false, true, true, true)
+                thisObject.mine = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Trading Mine', undefined, false, true, true, true)
                 if (thisObject.mine === undefined) {
-                    thisObject.mine = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Learning Mine', undefined, false, true, true, true)
+                    thisObject.mine = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Learning Mine', undefined, false, true, true, true)
                     if (thisObject.mine === undefined) {
-                        thisObject.payload.uiObject.setErrorMessage('Data Mine or Trading Mine or Learning Mine not Found')
-                        return
+                        thisObject.mine = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Portfolio Mine', undefined, false, true, true, true)
+                        if (thisObject.mine === undefined) {
+                            thisObject.payload.uiObject.setErrorMessage('Data Mine or Trading Mine or Portfolio Mine or Learning Mine not Found')
+                            return
+                        }
                     }
                 }
             }
 
-            thisObject.exchange = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Crypto Exchange', undefined, false, true, true, true)
+            thisObject.exchange = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Crypto Exchange', undefined, false, true, true, true)
             if (thisObject.exchange === undefined) {
                 thisObject.payload.uiObject.setErrorMessage('Crypto Exchange not Found')
                 return
             }
 
-            thisObject.baseAsset = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Market Base Asset', undefined, false, true, true, true)
+            thisObject.baseAsset = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Market Base Asset', undefined, false, true, true, true)
             if (thisObject.baseAsset !== undefined) {
                 thisObject.baseAsset = thisObject.baseAsset.referenceParent
             }
@@ -270,7 +283,7 @@ function newLayer() {
                 return
             }
 
-            thisObject.quotedAsset = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Market Quoted Asset', undefined, false, true, true, true)
+            thisObject.quotedAsset = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Market Quoted Asset', undefined, false, true, true, true)
             if (thisObject.quotedAsset !== undefined) {
                 thisObject.quotedAsset = thisObject.quotedAsset.referenceParent
             }
@@ -279,13 +292,13 @@ function newLayer() {
                 return
             }
 
-            thisObject.plotterModule = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Plotter Module', undefined, false, false, false, true)
+            thisObject.plotterModule = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'Plotter Module', undefined, false, false, false, true)
             if (thisObject.plotterModule === undefined) {
                 thisObject.payload.uiObject.setErrorMessage('Plotter Module not Found')
                 return
             }
 
-            thisObject.lanNetworkNode = UI.projects.foundations.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'LAN Network Node', undefined, false, true, true, true)
+            thisObject.lanNetworkNode = UI.projects.visualScripting.utilities.meshes.findNodeInNodeMesh(thisObject.definition, 'LAN Network Node', undefined, false, true, true, true)
             if (thisObject.lanNetworkNode === undefined) {
                 thisObject.payload.uiObject.setErrorMessage('Network Node not Found')
                 return
@@ -300,7 +313,7 @@ function newLayer() {
             thisObject.exchangeIcon = getIcon(thisObject.exchange)
 
             if (thisObject.plotterModule.config.icon !== undefined) {
-                thisObject.plotterTypeIcon = UI.projects.foundations.spaces.designSpace.getIconByProjectAndName('Foundations', thisObject.plotterModule.config.icon)
+                thisObject.plotterTypeIcon = UI.projects.workspaces.spaces.designSpace.getIconByProjectAndName('Foundations', thisObject.plotterModule.config.icon)
             }
 
             thisObject.baseAssetIcon = getIcon(thisObject.baseAsset)
@@ -319,9 +332,9 @@ function newLayer() {
                     }
                 }
                 if (iconName !== undefined) {
-                    icon = UI.projects.foundations.spaces.designSpace.getIconByProjectAndName('Foundations', iconName)
+                    icon = UI.projects.workspaces.spaces.designSpace.getIconByProjectAndName('Foundations', iconName)
                 } else {
-                    icon = UI.projects.foundations.spaces.designSpace.getIconByProjectAndName('Foundations', schemaDocument.icon)
+                    icon = UI.projects.workspaces.spaces.designSpace.getIconByProjectAndName('Foundations', schemaDocument.icon)
                 }
                 return icon
             }
@@ -333,8 +346,8 @@ function newLayer() {
     }
 
     function checkStatusAtShutDown() {
-        /* Mechanism to recover a layer that was left loading the last time the browser was shut dowm. */
-        let storedValue = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'status')
+        /* Mechanism to recover a layer that was left loading the last time the browser was shut down. */
+        let storedValue = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'status')
         if (storedValue !== undefined) {
             if (storedValue === LAYER_STATUS.LOADING) {
                 resetProgressBars()
@@ -499,7 +512,7 @@ function newLayer() {
                     if (thisObject.panels.length > 0) {
                         panelsVisibleButton = newPanelsVisibleButton()
 
-                        let storedValue = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'showPanels')
+                        let storedValue = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'showPanels')
                         if (storedValue !== undefined) {
                             if (storedValue === true || storedValue === false) {
                                 panelsVisibleButton.showPanels = storedValue
@@ -511,7 +524,7 @@ function newLayer() {
                     }
                 }
             } else {
-                UI.projects.foundations.utilities.nodeConfig.saveConfigProperty(thisObject.payload, 'showPanels', panelsVisibleButton.showPanels)
+                UI.projects.visualScripting.utilities.nodeConfig.saveConfigProperty(thisObject.payload, 'showPanels', panelsVisibleButton.showPanels)
             }
         }
     }
@@ -519,7 +532,7 @@ function newLayer() {
     function statusPhysics() {
         /* We retrieve the stored status at the config. */
         try {
-            let storedValue = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'status')
+            let storedValue = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'status')
 
             if (storedValue !== undefined) {
                 if (storedValue !== thisObject.status) {
@@ -560,7 +573,7 @@ function newLayer() {
                 }
             }
 
-            UI.projects.foundations.utilities.nodeConfig.saveConfigProperty(thisObject.payload, 'status', thisObject.status)
+            UI.projects.visualScripting.utilities.nodeConfig.saveConfigProperty(thisObject.payload, 'status', thisObject.status)
             let eventData = thisObject
             thisObject.container.eventHandler.raiseEvent('Status Changed', eventData)
         }
@@ -648,10 +661,26 @@ function newLayer() {
             label1 = label1.substring(0, 30)
         }
 
-        let backgroundColor = UI_COLOR.BLACK
+        // This controls the color of the drop down indicator panels inside the chart.
+        let chartingSpaceNode = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadByNodeType('Charting Space')
+        if (chartingSpaceNode !== undefined) {
+            if (chartingSpaceNode.spaceStyle !== undefined) {
+                configStyle = JSON.parse(chartingSpaceNode.spaceStyle.config)
+            }
+        } else {
+            configStyle = undefined
+        }
+
+        let backgroundColor
+
+        if (configStyle === undefined || configStyle.indicatorDropDownPanelColor === undefined) {
+            backgroundColor = UI_COLOR.BLACK
+        } else {
+            backgroundColor = eval(configStyle.indicatorDropDownPanelColor)
+        }
 
         const RED_LINE_HIGHT = 4
-        const OPACITY = 0.75
+        
 
         let params = {
             cornerRadius: 0,
@@ -660,18 +689,38 @@ function newLayer() {
             borderColor: UI_COLOR.RUSTED_RED,
             castShadow: false,
             backgroundColor: backgroundColor,
-            opacity: OPACITY
+            opacity: 0
         }
 
-        UI.projects.foundations.utilities.drawPrint.roundedCornersBackground(params)
+        // Here we set the opacity for the indicator drop down panel if it is defined.
+        if (configStyle === undefined || configStyle.indicatorDropDownPanelOpacity === undefined) {
+            const thisOpacity = 0.75
+            params.opacity = thisOpacity
+            UI.projects.foundations.utilities.drawPrint.roundedCornersBackground(params)
+        } else {
+            const thisOpacity = eval(configStyle.indicatorDropDownPanelOpacity)
+            params.opacity = thisOpacity
+            UI.projects.foundations.utilities.drawPrint.roundedCornersBackground(params)
+    }
 
-        let parentLabel1FontSize = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload.parentNode.payload, 'label1FontSize')
-        let parentlabelTwoFontSize = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload.parentNode.payload, 'labelTwoFontSize')
-        let parentLabel3FontSize = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload.parentNode.payload, 'label3FontSize')
+        // Here we set the top and bottom border color for the indicator drop down panel.
+        if (configStyle === undefined || configStyle.indicatorDropDownPanelBorderColor === undefined) {
+            let thisBorderColor = UI_COLOR.RUSTED_RED
+            params.borderColor = thisBorderColor
+            UI.projects.foundations.utilities.drawPrint.roundedCornersBackground(params)
+        } else {
+            let thisBorderColor = eval(configStyle.indicatorDropDownPanelBorderColor)
+            params.borderColor = thisBorderColor
+            UI.projects.foundations.utilities.drawPrint.roundedCornersBackground(params)
+        }
 
-        let label1FontSize = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'label1FontSize')
-        let labelTwoFontSize = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'labelTwoFontSize')
-        let label3FontSize = UI.projects.foundations.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'label3FontSize')
+        let parentLabel1FontSize = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload.parentNode.payload, 'label1FontSize')
+        let parentlabelTwoFontSize = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload.parentNode.payload, 'labelTwoFontSize')
+        let parentLabel3FontSize = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload.parentNode.payload, 'label3FontSize')
+
+        let label1FontSize = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'label1FontSize')
+        let labelTwoFontSize = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'labelTwoFontSize')
+        let label3FontSize = UI.projects.visualScripting.utilities.nodeConfig.loadConfigProperty(thisObject.payload, 'label3FontSize')
 
         if (parentLabel1FontSize !== undefined) {
             label1FontSize = parentLabel1FontSize
@@ -699,9 +748,32 @@ function newLayer() {
             label3FontSize = 9
         }
 
-        UI.projects.foundations.utilities.drawPrint.drawLabel(label1, 1 / 2, 5.2 / 10, -5, 0, label1FontSize, thisObject.container)
-        UI.projects.foundations.utilities.drawPrint.drawLabel(label2, 1 / 2, 8.2 / 10, -5, 0, labelTwoFontSize, thisObject.container)
-        UI.projects.foundations.utilities.drawPrint.drawLabel(label3, 1 / 2, 9.5 / 10, -5, 0, label3FontSize, thisObject.container)
+        if (configStyle === undefined || configStyle.indicatorDropDownPanelLabel1Color === undefined) {
+            UI.projects.foundations.utilities.drawPrint.drawLabel(label1, 1 / 2, 5.2 / 10, -5, 0, label1FontSize, thisObject.container)
+        } else {
+            let thisColor = eval(configStyle.indicatorDropDownPanelLabel1Color)
+            UI.projects.foundations.utilities.drawPrint.drawLabel(label1, 1 / 2, 5.2 / 10, -5, 0, label1FontSize, thisObject.container, thisColor)
+        }
+
+        // This controls the text color of the MidSized font size in the drop down indicator layers panels.
+        if (configStyle === undefined || configStyle.indicatorDropDownPanelLabel2Color === undefined) {
+            UI.projects.foundations.utilities.drawPrint.drawLabel(label2, 1 / 2, 8.2 / 10, -5, 0, labelTwoFontSize, thisObject.container)
+        } else {
+            let thisColor = eval(configStyle.indicatorDropDownPanelLabel2Color)
+            UI.projects.foundations.utilities.drawPrint.drawLabel(label2, 1 / 2, 8.2 / 10, -5, 0, labelTwoFontSize, thisObject.container, thisColor)
+        }
+
+        // This controls the text color of the ON/OFF font size in the drop down indicator layers panels.
+        if (configStyle === undefined || configStyle.indicatorDropDownPanelLabel3Color === undefined) {
+            UI.projects.foundations.utilities.drawPrint.drawLabel(label3, 1 / 2, 9.5 / 10, -5, 0, label3FontSize, thisObject.container)
+        } else {
+            let thisColor = eval(configStyle.indicatorDropDownPanelLabel3Color)
+            UI.projects.foundations.utilities.drawPrint.drawLabel(label3, 1 / 2, 9.5 / 10, -5, 0, label3FontSize, thisObject.container, thisColor)
+        }
+
+        // UI.projects.foundations.utilities.drawPrint.drawLabel(label1, 1 / 2, 5.2 / 10, -5, 0, label1FontSize, thisObject.container)
+        // UI.projects.foundations.utilities.drawPrint.drawLabel(label2, 1 / 2, 8.2 / 10, -5, 0, labelTwoFontSize, thisObject.container)
+        // UI.projects.foundations.utilities.drawPrint.drawLabel(label3, 1 / 2, 9.5 / 10, -5, 0, label3FontSize, thisObject.container)
 
         drawProgressBar(marketFileProgressBar, 2, -45 + 18)
         drawProgressBar(dailyFileProgressBar, 2, -46 + 18)
@@ -714,4 +786,3 @@ function newLayer() {
         UI.projects.foundations.utilities.drawPrint.drawIcon(thisObject.quotedAssetIcon, 4.6 / 8, 2 / 10, 0, 0, 14, thisObject.container)
     }
 }
-

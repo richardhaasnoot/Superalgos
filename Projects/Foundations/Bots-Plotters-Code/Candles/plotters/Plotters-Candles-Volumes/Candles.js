@@ -38,7 +38,7 @@
 
     /* these are module specific variables: */
 
-    let candles = [];                   // Here we keep the candles to be ploted every time the Draw() function is called by the AAWebPlatform.
+    let candles = [];                   // Here we keep the candles to be plotted every time the Draw() function is called by the AAWebPlatform.
 
     let onMouseOverEventSuscriptionId
     let zoomChangedEventSubscriptionId
@@ -55,7 +55,7 @@
     function finalize() {
         try {
 
-            /* Stop listening to the necesary events. */
+            /* Stop listening to the necessary events. */
             thisObject.container.eventHandler.stopListening(onMouseOverEventSuscriptionId)
             UI.projects.foundations.spaces.chartingSpace.viewport.eventHandler.stopListening(zoomChangedEventSubscriptionId);
             UI.projects.foundations.spaces.chartingSpace.viewport.eventHandler.stopListening(offsetChangedEventSubscriptionId);
@@ -64,7 +64,7 @@
             marketFiles.eventHandler.stopListening(marketFilesUpdatedEventSubscriptionId);
             dailyFiles.eventHandler.stopListening(dailyFilesUpdatedEventSubscriptionId);
 
-            /* Destroyd References */
+            /* Destroyed References */
 
             marketFiles = undefined;
             dailyFiles = undefined;
@@ -108,7 +108,7 @@
             marketFile = marketFiles.getFile(pTimeFrame);
             fileCursor = dailyFiles.getFileCursor(pTimeFrame);
 
-            /* Listen to the necesary events. */
+            /* Listen to the necessary events. */
 
             zoomChangedEventSubscriptionId = UI.projects.foundations.spaces.chartingSpace.viewport.eventHandler.listenToEvent("Zoom Changed", onViewportZoomChanged);
             offsetChangedEventSubscriptionId = UI.projects.foundations.spaces.chartingSpace.viewport.eventHandler.listenToEvent("Position Changed", onViewportPositionChanged);
@@ -376,7 +376,7 @@
                 currentDate = new Date(currentDate.valueOf() + ONE_DAY_IN_MILISECONDS);
             }
 
-            /* Lests check if all the visible screen is going to be covered by candles. */
+            /* Lets check if all the visible screen is going to be covered by candles. */
 
             let lowerEnd = leftDate.valueOf();
             let upperEnd = rightDate.valueOf();
@@ -609,6 +609,17 @@
 
                 function addToOnScreenCandles(candle) {
 
+                    let chartingSpaceNode = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadByNodeType('Charting Space')
+                        if (chartingSpaceNode !== undefined) {
+                            if (chartingSpaceNode.spaceStyle !== undefined) {
+                                configStyle = JSON.parse(chartingSpaceNode.spaceStyle.config)
+                            } else {
+                                configStyle = undefined
+                            }
+                        } else {
+                            configStyle = undefined
+                        }
+
                     /* Contributing to Auto-Scale*/
                     coordinateSystem.reportYValue(candle.max)
                     coordinateSystem.reportYValue(candle.min)
@@ -639,14 +650,31 @@
                 browserCanvasContext.closePath();
 
                 if (lowResolution === false) {
-                    browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.DARK + ', 1)';
-                    browserCanvasContext.fill();
 
-                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.LIGHT + ', 1)';
-                    browserCanvasContext.lineWidth = 1;
-                    browserCanvasContext.setLineDash([]) // Resets Line Dash
-                    browserCanvasContext.stroke();
+                    // Here we add user defined candle stick color and border line width. (optional)
+                    if (configStyle === undefined || configStyle.candleStickColor === undefined) {
+                        browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.DARK + ', 1)';
+                        browserCanvasContext.fill();
 
+                        browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.LIGHT + ', 1)';
+                        browserCanvasContext.lineWidth = 1;
+                        browserCanvasContext.setLineDash([]) // Resets Line Dash
+                        browserCanvasContext.stroke();
+                    } else {
+                        let stickColor = eval(configStyle.candleStickColor)
+                        browserCanvasContext.fillStyle = 'rgba(' + stickColor + ', 1)';
+                        browserCanvasContext.fill();
+                        browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.LIGHT + ', 1)';
+
+                        if (configStyle.candleBorderLineWidth === undefined) {
+                            browserCanvasContext.lineWidth = 1;
+                        } else {
+                            candleBorderLineWidth = eval(configStyle.candleBorderLineWidth)
+                            browserCanvasContext.lineWidth = candleBorderLineWidth;
+                        }
+                        browserCanvasContext.setLineDash([]) // Resets Line Dash
+                        browserCanvasContext.stroke();
+                    }
                 }
 
                 /* The stick at the mouse candle */
@@ -683,6 +711,24 @@
 
                     browserCanvasContext.beginPath();
 
+                    let candleUpColor
+                    let candleDownColor
+                    let candleSideColor
+                    let candleUpBorderColor
+                    let candleDownBorderColor
+                    let candleSideBorderColor
+
+                    let chartingSpaceNode = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadByNodeType('Charting Space')
+                        if (chartingSpaceNode !== undefined) {
+                            if (chartingSpaceNode.spaceStyle !== undefined) {
+                                configStyle = JSON.parse(chartingSpaceNode.spaceStyle.config)
+                            } else {
+                                configStyle = undefined
+                            }
+                        } else {
+                            configStyle = undefined
+                        }
+
                     for (let i = 0; i < onScreenCandles.length; i++) {
 
                         candle = onScreenCandles[i];
@@ -702,24 +748,73 @@
 
                     if (lowResolution === false) {
 
-                        if (direction === 'up') { browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.GREEN + ', 1)'; }
-                        if (direction === 'down') { browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.RUSTED_RED + ', 1)'; }
-                        if (direction === 'side') { browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.DARK + ', 1)'; }
+                        if (direction === 'up') {
+                            // We check if a specific candle color is defined.
+                            if (configStyle === undefined || configStyle.candleUpColor === undefined) {
+                                browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.GREEN + ', 1)'
+                            } else {
+                                candleUpColor = eval(configStyle.candleUpColor)
+                                browserCanvasContext.fillStyle = 'rgba(' + candleUpColor + ', 1)'
+                            } 
+                        }
+
+                        if (direction === 'down') {
+                            // We check if a specific candle color is defined.
+                            if (configStyle === undefined || configStyle.candleDownColor === undefined) {
+                                browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.RUSTED_RED + ', 1)'
+                            } else {
+                                candleDownColor = eval(configStyle.candleDownColor)
+                                browserCanvasContext.fillStyle = 'rgba(' + candleDownColor + ', 1)'
+                            }
+                        }
+
+                        if (direction === 'side') {
+                            // We check if a specific candle color is defined.
+                            if (configStyle === undefined || configStyle.candleSideColor === undefined) {
+                                browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.DARK + ', 1)'
+                            } else {
+                                candleSideColor = eval(configStyle.candleSideColor)
+                                browserCanvasContext.fillStyle = 'rgba(' + candleSideColor + ', 1)'
+                            }
+                        }
 
                         browserCanvasContext.fill();
                     }
-
-                    if (direction === 'up') { browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.PATINATED_TURQUOISE + ', 1)'; }
-                    if (direction === 'down') { browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.RED + ', 1)'; }
-                    if (direction === 'side') { browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.DARK + ', 1)'; }
+                    // We handle the border color for UP candles.
+                    if (direction === 'up') {
+                            if (configStyle === undefined || configStyle.candleUpBorderColor === undefined) {
+                                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.PATINATED_TURQUOISE + ', 1)'
+                            } else {
+                                candleUpBorderColor = eval(configStyle.candleUpBorderColor)
+                                browserCanvasContext.strokeStyle = 'rgba(' + candleUpBorderColor + ', 1)'
+                            }
+                    }
+                    // We handle the border color for Down candles.
+                    if (direction === 'down') { 
+                        if (configStyle === undefined || configStyle.candleDownBorderColor === undefined) {
+                            browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GREEN + ', 1)'
+                        } else {
+                            candleDownBorderColor = eval(configStyle.candleDownBorderColor)
+                            browserCanvasContext.strokeStyle = 'rgba(' + candleDownBorderColor + ', 1)'
+                        }
+                    }
+                    // We handle the border color for sideways candles.
+                    if (direction === 'side') { 
+                        if (configStyle === undefined || configStyle.candleSideBorderColor === undefined) {
+                            browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.DARK + ', 1)'
+                        } else {
+                            candleSideBorderColor = eval(configStyle.candleSideBorderColor)
+                            browserCanvasContext.strokeStyle = 'rgba(' + candleSideBorderColor + ', 1)'
+                        }
+                    }
 
                     browserCanvasContext.lineWidth = 1;
                     browserCanvasContext.setLineDash([]) // Resets Line Dash
                     browserCanvasContext.stroke();
+                    }
+                
 
-                }
-
-                /* Draw mouse candel and Raise Event. */
+                /* Draw mouse candle and Raise Event. */
                 if (mouseCandle) {
 
                     /* highlight the current candle */
@@ -735,7 +830,7 @@
 
                     browserCanvasContext.closePath();
 
-                    browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', 1)'; // Current candle accroding to time
+                    browserCanvasContext.fillStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', 1)'; // Current candle according to time
 
                     browserCanvasContext.fill();
 
@@ -757,6 +852,7 @@
             if (ERROR_LOG === true) { logger.write("[ERROR] plotChart -> err = " + err.stack); }
         }
     }
+
 
 
     function onViewportZoomChanged(event) {

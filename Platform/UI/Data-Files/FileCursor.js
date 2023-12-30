@@ -19,9 +19,14 @@ function newFileCursor() {
     finalize: finalize
   }
 
-  let minCursorSize = 10
-  let maxCursorSize = 30
+  
+  
 
+  let configStyle
+  let minCursorSize = getMinCursorSize()            // minCursorSize controls the initial amount of data that is plotted.
+  let maxCursorSize = getMaxCursorSize()            // maxCursorSize controls the max amount of data that can be plotted when users scroll the chart.
+
+  
   let market
   let exchange
   let fileCloud
@@ -195,7 +200,7 @@ function newFileCursor() {
       /*
 
       We are implementing here an algorithm designed to save bandwidth, memory and processing power at the browser.
-      We say there is a saving mode where the cursor is running at a minimum size. When the end user aproaches the time period the cursor
+      We say there is a saving mode where the cursor is running at a minimum size. When the end user approaches the time period the cursor
       is set, then it should exit the saving mode and go to its actual size.
 
       To do this we are going to measure the distance from the Time Frame received to the one the cursors was initialized with.
@@ -427,7 +432,7 @@ function newFileCursor() {
           let targetDate = new Date(cursorDate)
           targetDate.setUTCDate(targetDate.getUTCDate() + j)
 
-          /* Small algorith to allow load first the current date, then alternate between the most forwad and the most backwards ones. */
+          /* Small algorithm to allow load first the current date, then alternate between the most forward and the most backwards ones. */
           if (j === 0) { j++ } else {
             if (j < 0) {
               j = -j
@@ -575,5 +580,38 @@ function newFileCursor() {
     if (INFO_LOG === true) { logger.write('[INFO] getExpectedFiles -> Entering function.') }
 
     return minCursorSize
+  }
+
+  /**This function gets the minCursorSize if it is defined at the Space Style node connected to the Charting Space node. */
+  function getMinCursorSize() {
+    let chartingSpaceNode = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadByNodeType('Charting Space')
+        if (chartingSpaceNode !== undefined) {
+            if (chartingSpaceNode.spaceStyle !== undefined) {
+                configStyle = JSON.parse(chartingSpaceNode.spaceStyle.config)
+            } else {
+              configStyle = undefined
+            }
+        } else {
+            configStyle = undefined
+        }
+
+        if (configStyle === undefined || configStyle.minCursorSize === undefined) {
+          let cursorSize = 10
+          return cursorSize
+      } else {
+          let cursorSize = eval(configStyle.minCursorSize)
+          return cursorSize
+      }
+  }
+
+  /** This function gets the maxCursorSize if it is defined at the Space Style node connected to the Charting Space node. */
+  function getMaxCursorSize() {
+    if (configStyle === undefined || configStyle.maxCursorSize === undefined) {
+      let cursorSize = 30
+      return cursorSize
+  } else {
+      let cursorSize = eval(configStyle.maxCursorSize)
+      return cursorSize
+    }
   }
 }

@@ -33,6 +33,7 @@ function newTimelineChart() {
     timelineChartCoordinateSystem.name = 'TIMELINE CHART'
 
     let coordinateSystem
+    let configStyle
 
     let layersPanel
     let layersPanelHandle
@@ -127,7 +128,7 @@ function newTimelineChart() {
         thisObject.rateScale.finalize()
         thisObject.rateScale = undefined
 
-        /* Resets the local container with the dimessions of its parent, the Time Machine */
+        /* Resets the local container with the dimensions of its parent, the Time Machine */
         thisObject.container.frame.position.x = 0
         thisObject.container.frame.position.y = 0
         thisObject.container.frame.height = thisObject.container.parentContainer.frame.height
@@ -135,7 +136,7 @@ function newTimelineChart() {
     }
 
     function initialize(pTimeMachineCoordinateSystem, pTimeFrame) {
-        /* We load the logow we will need for the background. */
+        /* We load the logo we will need for the background. */
 
         timeMachineCoordinateSystem = pTimeMachineCoordinateSystem
         coordinateSystem = timeMachineCoordinateSystem
@@ -291,7 +292,7 @@ function newTimelineChart() {
     }
 
     function onMouseOver(event) {
-        /* This event gets to the timelinechart container because it inherits it from the time machine container, which is the one raising Mouse Over and Mouse not Over Events to its children. */
+        /* This event gets to the timeline chart container because it inherits it from the time machine container, which is the one raising Mouse Over and Mouse not Over Events to its children. */
         drawScales = true
 
         if (thisObject.rateScale !== undefined) {
@@ -463,7 +464,24 @@ function newTimelineChart() {
         }
     }
 
+    // I don't think this does anything color wise.
     function drawChartsBackground() {
-        UI.projects.foundations.utilities.drawPrint.drawContainerBackground(thisObject.container, UI_COLOR.WHITE, 0, thisObject.fitFunction)
+        let chartingSpaceNode = UI.projects.workspaces.spaces.designSpace.workspace.getHierarchyHeadByNodeType('Charting Space')
+        if (chartingSpaceNode !== undefined) {
+            if (chartingSpaceNode.spaceStyle !== undefined) {
+                configStyle = JSON.parse(chartingSpaceNode.spaceStyle.config)
+            } else {
+                configStyle = undefined
+            }
+        } else {
+            configStyle = undefined
+        }
+
+        if (configStyle === undefined || configStyle.indicatorPanelBackgroundColor === undefined) {
+            UI.projects.foundations.utilities.drawPrint.drawContainerBackground(thisObject.container, UI_COLOR.WHITE, 0, thisObject.fitFunction)
+        } else {
+            let thisColor = eval(configStyle.indicatorPanelBackgroundColor)
+            UI.projects.foundations.utilities.drawPrint.drawContainerBackground(thisObject.container, thisColor, 0, thisObject.fitFunction)
+        }
     }
 }
